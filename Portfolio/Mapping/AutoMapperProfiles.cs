@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Portfolio.DTOs.Category;
+using Portfolio.DTOs.Skills.TechnologySkill;
 using Portfolio.DTOs.Technology;
 using Portfolio.Entities;
 
@@ -14,6 +15,9 @@ namespace Portfolio.Mapping
                 .ForMember(x => x.ImageUrl, opt => opt.Ignore());
 
             CreateMap<CategoryCreationDTO, Category>();
+
+            CreateMap<TechnicalSkillCreationDTO, TechnicalSkill>().ReverseMap();
+            CreateMap<TechnicalSkill, TechnicalSkillDTO>().ReverseMap();
         }
     }
 }

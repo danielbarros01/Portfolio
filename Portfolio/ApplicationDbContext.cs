@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portfolio.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Portfolio
 {
@@ -11,5 +12,6 @@ namespace Portfolio
 
         public DbSet<Technology> Technologies { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<TechnicalSkill> TechnicalSkills { get; set; }
     }
 }
