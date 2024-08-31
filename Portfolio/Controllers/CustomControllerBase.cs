@@ -153,6 +153,43 @@ namespace Portfolio.Controllers
             return NoContent();
         }
 
+
+        protected async Task<ActionResult> PutWithImage<TCreation, TEntity>
+           (int id, TCreation creationDTO, string imageContainer) 
+            where TEntity : class, IId, IHasImageUrl
+            where TCreation : IHasImage
+        {
+            var entity = await _context.Set<TEntity>()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (entity == null)
+                return NotFound();
+
+            var image = creationDTO.Image;
+            if (image != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await image.CopyToAsync(memoryStream);
+                    var content = memoryStream.ToArray(); //datos en bytes
+                    var extension = Path.GetExtension(image.FileName);
+
+                    entity.ImageUrl = await _fileStorage.SaveFile(
+                            content,
+                            extension,
+                            imageContainer,
+                            image.ContentType
+                         );
+                }
+            }
+
+            _mapper.Map(creationDTO, entity);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         protected async Task<ActionResult> Delete<TEntity>(int id) where TEntity : class, IId
         {
             var entity = await _context.Set<TEntity>()

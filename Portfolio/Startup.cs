@@ -17,7 +17,7 @@ namespace Portfolio
         {
             services.AddAutoMapper(typeof(Startup));
             services.AddTransient<IFileStorage, LocalFileStorage>();
-            
+
             services.AddHttpContextAccessor();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
@@ -28,6 +28,16 @@ namespace Portfolio
                     ServerVersion.AutoDetect(configuration["ConnectionStrings:MySqlConnection"])
                 )
 );
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://127.0.0.1:5500")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
 
         }
 
@@ -42,9 +52,12 @@ namespace Portfolio
 
             app.UseStaticFiles();
 
+            app.UseCors("AllowLocalhost");
+
             app.UseRouting();
 
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {

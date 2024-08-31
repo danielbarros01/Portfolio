@@ -65,7 +65,8 @@ namespace Portfolio.Controllers
             if (!categoryExist)
                 return BadRequest();
 
-            return await Put<TechnologyCreationDTO, Technology>(id, technologyCreationDTO);
+            return await PutWithImage<TechnologyCreationDTO, Technology>
+                (id, technologyCreationDTO, folderContainerFiles);
         }
 
         [HttpDelete("{id:int}")]
