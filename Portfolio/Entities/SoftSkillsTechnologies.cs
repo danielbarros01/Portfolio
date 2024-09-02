@@ -6,9 +6,10 @@ namespace Portfolio.Entities
     public class SoftSkillsTechnologies
     {
         [Column("technology_id")]
-        public int SoftSkillId { get; set; }
-        [Column("soft_skill_id")]
         public int TechnologyId { get; set; }
+
+        [Column("soft_skill_id")]
+        public int SoftSkillId { get; set; }
 
         public SoftSkill SoftSkill { get; set; }
         public Technology Technology { get; set; }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
-using System.Text.Json.Serialization;
 
 namespace Portfolio.Helpers
 {
@@ -8,25 +7,24 @@ namespace Portfolio.Helpers
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            var propertyName = bindingContext.ModelName;    
+            var propertyName = bindingContext.ModelName;
             var valueProvider = bindingContext.ValueProvider
                 .GetValue(propertyName);
 
-            if (valueProvider == ValueProviderResult.None) 
+            if (valueProvider == ValueProviderResult.None)
                 return Task.CompletedTask;
 
             try
             {
-                var deserializedValue = JsonConvert
-                    .DeserializeObject<T>(valueProvider.FirstValue);
+                var deserializedValue = JsonConvert.DeserializeObject<T>(valueProvider.FirstValue);
                 bindingContext.Result = ModelBindingResult.Success(deserializedValue);
             }
-            catch 
+            catch
             {
                 bindingContext.ModelState
                     .TryAddModelError(propertyName, "Invalid value for type List<int>");
             }
-        
+
             return Task.CompletedTask;
         }
     }

@@ -15,13 +15,39 @@ namespace Portfolio
         public DbSet<TechnicalSkill> TechnicalSkills { get; set; }
         public DbSet<SoftSkill> SoftSkills { get; set; }
         public DbSet<SoftSkillsTechnologies> SoftSkillsTechnologies { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectsTechnologies> ProjectsTechnologies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SoftSkillsTechnologies>()
                 .HasKey(x => new { x.SoftSkillId, x.TechnologyId });
 
+            // Clave primaria compuesta
+            modelBuilder.Entity<ProjectsTechnologies>()
+                .HasKey(pt => new { pt.AssociationId, pt.TechnologyId });
+
+            /*// Relación con Project
+            modelBuilder.Entity<ProjectsTechnologies>()
+                .HasOne(pt => pt.Project)
+                .WithMany(p => p.ProjectsTechnologies)
+                .HasForeignKey(pt => pt.AssociationId);
+
+            // Relación con Technology
+            modelBuilder.Entity<ProjectsTechnologies>()
+                .HasOne(pt => pt.Technology)
+                .WithMany(t => t.ProjectsTechnologies)
+                .HasForeignKey(pt => pt.TechnologyId);*/
+
             base.OnModelCreating(modelBuilder);
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+                .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
+                .EnableSensitiveDataLogging();
+        }
+
     }
 }

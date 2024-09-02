@@ -13,5 +13,7 @@ namespace Portfolio.Entities
         [Required]
         [Column("category_id")]
         public int CategoryId { get; set; }
+
+        public ICollection<ProjectsTechnologies> ProjectsTechnologies { get; set; }
     }
 }
