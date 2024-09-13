@@ -17,14 +17,19 @@ namespace Portfolio
         public DbSet<SoftSkillsTechnologies> SoftSkillsTechnologies { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectsTechnologies> ProjectsTechnologies { get; set; }
+        public DbSet<Education> Educations { get; set; }
+        public DbSet<EducationsTechnologies> EducationsTechnologies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SoftSkillsTechnologies>()
-                .HasKey(x => new { x.SoftSkillId, x.TechnologyId });
+                .HasKey(x => new { x.AssociationId, x.TechnologyId });
 
             // Clave primaria compuesta
             modelBuilder.Entity<ProjectsTechnologies>()
+                .HasKey(pt => new { pt.AssociationId, pt.TechnologyId });
+
+            modelBuilder.Entity<EducationsTechnologies>()
                 .HasKey(pt => new { pt.AssociationId, pt.TechnologyId });
 
             /*// Relación con Project

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.DTOs.Technology;
 using Portfolio.Entities;
-using Portfolio.Services;
+using Portfolio.Services.Storage;
 
 namespace Portfolio.Controllers
 {

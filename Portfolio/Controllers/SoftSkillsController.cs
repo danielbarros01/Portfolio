@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Portfolio.DTOs.Others;
+using Portfolio.DTOs.Project;
 using Portfolio.DTOs.Skills.SoftSkill;
+using Portfolio.DTOs.Skills.TechnologySkill;
 using Portfolio.Entities;
+using Portfolio.Helpers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,16 +26,33 @@ namespace Portfolio.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{id:int}",Name = "GetSoftSkill")]
-        public async Task<ActionResult<SoftSkill>> Get()
+        [HttpGet(Name = "GetSoftSkills")]
+        public async Task<ActionResult<List<SoftSkillDTO>>> Get([FromQuery] PaginationDTO pagination)
         {
-            return Ok();
+            var softSkillsDTO = await Get<SoftSkill, SoftSkillDTO>(
+                pagination,
+                query => query
+                        .Include(p => p.SoftSkillsTechnologies)
+                        .ThenInclude(pt => pt.Technology));
+
+            return softSkillsDTO;
+        }
+
+        [HttpGet("{id:int}", Name = "GetSoftSkill")]
+        public async Task<ActionResult<SoftSkillDTO>> Get(int id)
+        {
+            return await Get<SoftSkill, SoftSkillDTO>(
+                    id,
+                    query => query
+                        .Include(p => p.SoftSkillsTechnologies)
+                        .ThenInclude(pt => pt.Technology)
+                );
         }
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] SoftSkillCreationDTO softSkillCreation)
         {
-            var ids = softSkillCreation.TechnologiesIds;
+            var ids = softSkillCreation.TechnologyIds;
             bool technologiesExist = await _context.Technologies
                 .Where(t => ids.Contains(t.Id))
                 .CountAsync() == ids.Count;
@@ -39,8 +60,35 @@ namespace Portfolio.Controllers
             if (!technologiesExist)
                 return NotFound();
 
-            return await Post<SoftSkillCreationDTO, SoftSkill, SoftSkill>
+            return await Post<SoftSkillCreationDTO, SoftSkill, SoftSkillDTO>
                 (softSkillCreation, "GetSoftSkill");
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id, [FromBody] SoftSkillCreationDTO softSkillCreation)
+        {
+            var ids = softSkillCreation.TechnologyIds;
+            bool technologiesExist = await _context.Technologies
+                .Where(t => ids.Contains(t.Id))
+                .CountAsync() == ids.Count;
+
+            if (!technologiesExist)
+                return NotFound();
+
+            var removeAssociations = await TechnologiesUtil.RemoveAssociations<SoftSkillCreationDTO, SoftSkillsTechnologies>
+                (_context, id, softSkillCreation);
+
+            if (!removeAssociations)
+                return NotFound();
+
+
+            return await Put<SoftSkillCreationDTO, SoftSkill>(id, softSkillCreation);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            return await Delete<SoftSkill>(id);
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿
+using Portfolio.Services.Storage;
+
 namespace Portfolio.Services
 {
     public class LocalFileStorage : IFileStorage

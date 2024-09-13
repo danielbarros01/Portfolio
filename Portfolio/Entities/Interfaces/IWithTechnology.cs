@@ -2,7 +2,6 @@
 {
     public interface IWithTechnology
     {
-        public int TechnologyId { get; set; }
-        public int AssociationId { get; set; }
+        public Technology Technology { get; set; }
     }
 }

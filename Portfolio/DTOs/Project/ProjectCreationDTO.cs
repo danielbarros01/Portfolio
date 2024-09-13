@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Portfolio.DTOs.Project
 {
-    public class ProjectCreationDTO : IHasImage, IWithTechnologies
+    public class ProjectCreationDTO : IHasImage, IWithTechnologiesIds
     {
         public String Title { get; set; }
         public String Description { get; set; }

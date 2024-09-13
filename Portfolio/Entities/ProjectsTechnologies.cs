@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Portfolio.Entities
 {
     [Table("project_technologies")]
-    public class ProjectsTechnologies : IWithTechnology
+    public class ProjectsTechnologies : IWithTechnologyId, IWithTechnology
     {
         [Column("technology_id")]
         public int TechnologyId { get; set; }

@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Services;
+using Portfolio.Services.Email;
+using Portfolio.Services.Storage;
 
 namespace Portfolio
 {
@@ -24,10 +26,10 @@ namespace Portfolio
 
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseMySql(
-                    configuration["ConnectionStrings:MySqlConnection"],
+                    configuration["ConnectionStrings:MySqlConnection"] + ";SslMode=none;",
                     ServerVersion.AutoDetect(configuration["ConnectionStrings:MySqlConnection"])
-                )
-);
+                ));
+
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowLocalhost",
@@ -36,9 +38,15 @@ namespace Portfolio
                         builder.WithOrigins("http://127.0.0.1:5500")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
+
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
                     });
             });
 
+
+            services.AddScoped<IEmailService, EmailService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)

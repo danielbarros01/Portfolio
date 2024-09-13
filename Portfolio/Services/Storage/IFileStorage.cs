@@ -1,4 +1,4 @@
-﻿namespace Portfolio.Services
+﻿namespace Portfolio.Services.Storage
 {
     public interface IFileStorage
     {

@@ -10,18 +10,31 @@ namespace Portfolio.Helpers
 {
     public class TechnologiesUtil
     {
+        public static async Task<Boolean> ValidateTechnologiesExistence<TCreation>
+            (ApplicationDbContext context, TCreation entityCreation)
+            where TCreation : class, IWithTechnologiesIds
+        {
+           return await context.Technologies
+                .Where(t => entityCreation.TechnologyIds.Contains(t.Id))
+                .CountAsync() == entityCreation.TechnologyIds.Count();
+        }
+
+        /*
+         ACTUALIZAR CODIGO
+        ELIMINA LOS NUEVOS QUE VIENEN
+        NO LOS QUE YA ESTAN
+         */
+
         public static async Task<Boolean> RemoveAssociations<TEntity, TEntityAssociation>(ApplicationDbContext context, int id, TEntity entity)
-            where TEntity : class, IWithTechnologies
-            where TEntityAssociation : class, IWithTechnology
+            where TEntity : class, IWithTechnologiesIds
+            where TEntityAssociation : class, IWithTechnologyId
         {
             try
             {
                 var technologiesIds = entity.TechnologyIds;
                 var technologiesWithEntity = await context.Set<TEntityAssociation>()
-                    .Where(x =>
-                        technologiesIds.Contains(x.TechnologyId) && x.AssociationId == id
+                    .Where(x => x.AssociationId == id
                     )
-                    //.Select(x => new { x.AssociationId, x.TechnologyId })
                     .ToListAsync();
 
                 if (technologiesWithEntity.Any())

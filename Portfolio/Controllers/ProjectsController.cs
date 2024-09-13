@@ -5,7 +5,7 @@ using Portfolio.DTOs.Project;
 using Portfolio.DTOs.Technology;
 using Portfolio.Entities;
 using Portfolio.Helpers;
-using Portfolio.Services;
+using Portfolio.Services.Storage;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -52,9 +52,8 @@ namespace Portfolio.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] ProjectCreationDTO projectCreation)
         {
-            bool allTechnologiesExist = await _context.Technologies
-                .Where(t => projectCreation.TechnologyIds.Contains(t.Id))
-                .CountAsync() == projectCreation.TechnologyIds.Count();
+            bool allTechnologiesExist = await TechnologiesUtil.ValidateTechnologiesExistence
+                (_context, projectCreation);
 
             if (!allTechnologiesExist)
                 return NotFound();
@@ -66,17 +65,20 @@ namespace Portfolio.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromForm] ProjectCreationDTO projectCreation)
         {
-            bool allTechnologiesExist = await _context.Technologies
-                .Where(t => projectCreation.TechnologyIds.Contains(t.Id))
-                .CountAsync() == projectCreation.TechnologyIds.Count();
+            bool allTechnologiesExist = await TechnologiesUtil.ValidateTechnologiesExistence
+               (_context, projectCreation);
 
             if (!allTechnologiesExist)
                 return NotFound();
 
-            var result = await TechnologiesUtil.RemoveAssociations<ProjectCreationDTO, ProjectsTechnologies>
+            var removeAssociations = await TechnologiesUtil.RemoveAssociations<ProjectCreationDTO, ProjectsTechnologies>
                 (_context, id, projectCreation);
 
-            return await Put<ProjectCreationDTO, Project>(id, projectCreation);
+            if(!removeAssociations) 
+                return NotFound();
+
+
+            return await PutWithImage<ProjectCreationDTO, Project>(id, projectCreation, folderContainerFiles);
         }
 
         [HttpDelete("{id:int}")]

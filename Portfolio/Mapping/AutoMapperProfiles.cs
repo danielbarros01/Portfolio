@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Portfolio.DTOs.Category;
+using Portfolio.DTOs.Education;
 using Portfolio.DTOs.Project;
 using Portfolio.DTOs.Skills.SoftSkill;
 using Portfolio.DTOs.Skills.TechnologySkill;
 using Portfolio.DTOs.Technology;
 using Portfolio.Entities;
+using Portfolio.Entities.Interfaces;
 
 namespace Portfolio.Mapping
 {
@@ -21,46 +23,82 @@ namespace Portfolio.Mapping
             CreateMap<TechnicalSkillCreationDTO, TechnicalSkill>().ReverseMap();
             CreateMap<TechnicalSkill, TechnicalSkillDTO>().ReverseMap();
 
-            CreateMap<SoftSkillCreationDTO, SoftSkill>().ReverseMap();
-
             CreateMap<ProjectCreationDTO, Project>()
                 .ForMember(x => x.ImageUrl, options => options.Ignore())
                 .ForMember(
                     x => x.ProjectsTechnologies,
-                    options => options.MapFrom(MapProjectsTechnologies)
+                    options => options.MapFrom(src => MapAssociationTechnologies<ProjectsTechnologies>(src.TechnologyIds))
                 );
 
             CreateMap<ProjectDTO, Project>()
                 .ReverseMap()
+                .ForMember(
+                    x => x.Technologies,
+                    opt => opt.MapFrom(src => MapTechnologiesProject(src.ProjectsTechnologies))
+                );
+
+            CreateMap<SoftSkillCreationDTO, SoftSkill>()
+                .ForMember(
+                    x => x.SoftSkillsTechnologies,
+                    options => options.MapFrom(src => MapAssociationTechnologies<SoftSkillsTechnologies>(src.TechnologyIds))
+                );
+
+            CreateMap<SoftSkillDTO, SoftSkill>()
+                .ReverseMap()
+                .ForMember(
+                    x => x.Technologies,
+                    opt => opt.MapFrom(src => MapTechnologiesProject(src.SoftSkillsTechnologies))
+                );
+
+
+            CreateMap<EducationCreationDTO, Education>()
+                .ForMember(x => x.ImageUrl, options => options.Ignore())
+                .ForMember(
+                    x => x.EducationsTechnologies,
+                    options => options.MapFrom(src => MapAssociationTechnologies<EducationsTechnologies>(src.TechnologyIds))
+                );
+
+            CreateMap<EducationDTO, Education>()
+                .ReverseMap()
                 .ForMember(x =>
                     x.Technologies,
-                    options => options.MapFrom(MapTechnologiesProject)
+                    opt => opt.MapFrom(src => MapTechnologiesProject(src.EducationsTechnologies))
                 );
         }
 
-        private List<Technology> MapTechnologiesProject
-            (Project project, ProjectDTO projectDTO)
+
+        private List<Technology> MapTechnologiesProject<TAssociation>
+            (IEnumerable<TAssociation> associations)
+            where TAssociation : class, IWithTechnology
         {
             var result = new List<Technology>();
-            if(project.ProjectsTechnologies == null) { return result; }
 
-            foreach(var pTechnology in project.ProjectsTechnologies)
+            if (associations == null)
+                return result;
+
+            foreach (var association in associations)
             {
-                result.Add(pTechnology.Technology);
+                result.Add(association.Technology);
             }
 
             return result;
         }
 
-        private List<ProjectsTechnologies> MapProjectsTechnologies
-            (ProjectCreationDTO projectCreation, Project project)
-        {
-            var result = new List<ProjectsTechnologies>();
-            if (projectCreation.TechnologyIds == null) { return result; }
 
-            foreach (var id in projectCreation.TechnologyIds)
+        private List<TAssociation> MapAssociationTechnologies<TAssociation>
+            (IEnumerable<int> technologyIds)
+            where TAssociation : class, new()
+        {
+            var result = new List<TAssociation>();
+
+            if (technologyIds == null)
+                return result;
+
+            foreach (var id in technologyIds)
             {
-                result.Add(new ProjectsTechnologies() { TechnologyId = id });
+                var association = new TAssociation();
+                typeof(TAssociation).GetProperty("TechnologyId")?.SetValue(association, id);
+                result.Add(association);
             }
 
             return result;

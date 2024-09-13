@@ -6,6 +6,7 @@ using Portfolio.DTOs.Others;
 using Portfolio.DTOs.Skills.TechnologySkill;
 using Portfolio.DTOs.Technology;
 using Portfolio.Entities;
+using Portfolio.Helpers;
 
 namespace Portfolio.Controllers
 {
@@ -54,17 +55,14 @@ namespace Portfolio.Controllers
             if (!technologyExists)
                 return BadRequest();
 
-            var orderConflict = await _context.TechnicalSkills
-                .AnyAsync(t => t.Order == skillCreationDTO.Order);
+            var technologyAssociated = await _context
+                .TechnicalSkills
+                .AnyAsync(ts => ts.TechnologyId == skillCreationDTO.TechnologyId);
 
-            if (orderConflict)
-            {
-                var highestOrderSkill = await _context.TechnicalSkills
-                    .OrderByDescending(x => x.Order)
-                    .FirstOrDefaultAsync();
+            if (technologyAssociated)
+                return Conflict();
 
-                skillCreationDTO.Order = highestOrderSkill.Order + 1;
-            }
+            await OrderUtil.OrderConflict<TechnicalSkill, TechnicalSkillCreationDTO>(_context, skillCreationDTO);
 
             return await Post<TechnicalSkillCreationDTO, TechnicalSkill, TechnicalSkillDTO>
                 (skillCreationDTO, "GetTechnicalSkill");
