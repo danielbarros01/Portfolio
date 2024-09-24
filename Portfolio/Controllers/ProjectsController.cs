@@ -19,6 +19,7 @@ namespace Portfolio.Controllers
         private readonly IMapper _mapper;
         private readonly IFileStorage _fileStorage;
         private readonly string folderContainerFiles = "Projects";
+        private readonly string readmesFolderPath = "Projects/readmes";
 
         public ProjectsController(ApplicationDbContext context, IMapper mapper, IFileStorage fileStorage)
             : base(context, mapper, fileStorage)
@@ -58,8 +59,8 @@ namespace Portfolio.Controllers
             if (!allTechnologiesExist)
                 return NotFound();
 
-            return await PostWithImage<ProjectCreationDTO, Project, ProjectDTO>
-                (projectCreation, "GetProject", folderContainerFiles);
+            return await PostWithImageAndReadme<ProjectCreationDTO, Project, ProjectDTO>
+                (projectCreation, "GetProject", folderContainerFiles, readmesFolderPath);
         }
 
         [HttpPut("{id:int}")]
@@ -77,8 +78,7 @@ namespace Portfolio.Controllers
             if(!removeAssociations) 
                 return NotFound();
 
-
-            return await PutWithImage<ProjectCreationDTO, Project>(id, projectCreation, folderContainerFiles);
+            return await PutWithImageAndReadme<ProjectCreationDTO, Project>(id, projectCreation, folderContainerFiles, readmesFolderPath);
         }
 
         [HttpDelete("{id:int}")]

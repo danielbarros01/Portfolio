@@ -115,19 +115,8 @@ namespace Portfolio.Controllers
             var image = creationDTO.Image;
             if (image != null)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await image.CopyToAsync(memoryStream);
-                    var content = memoryStream.ToArray(); //datos en bytes
-                    var extension = Path.GetExtension(image.FileName);
-
-                    entity.ImageUrl = await _fileStorage.SaveFile(
-                            content,
-                            extension,
-                            imageContainer,
-                            image.ContentType
-                         );
-                }
+                entity.ImageUrl = await FilesUtil.GetUrlFile
+                    (image, _fileStorage, imageContainer, ActionForFileType.Save);
             }
 
             _context.Add(entity);
@@ -155,7 +144,7 @@ namespace Portfolio.Controllers
 
 
         protected async Task<ActionResult> PutWithImage<TCreation, TEntity>
-           (int id, TCreation creationDTO, string imageContainer) 
+           (int id, TCreation creationDTO, string imageContainer)
             where TEntity : class, IId, IHasImageUrl
             where TCreation : IHasImage
         {
@@ -168,19 +157,8 @@ namespace Portfolio.Controllers
             var image = creationDTO.Image;
             if (image != null)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await image.CopyToAsync(memoryStream);
-                    var content = memoryStream.ToArray(); //datos en bytes
-                    var extension = Path.GetExtension(image.FileName);
-
-                    entity.ImageUrl = await _fileStorage.SaveFile(
-                            content,
-                            extension,
-                            imageContainer,
-                            image.ContentType
-                         );
-                }
+                entity.ImageUrl = await FilesUtil.GetUrlFile
+                    (image, _fileStorage, imageContainer, ActionForFileType.Edit);
             }
 
             _mapper.Map(creationDTO, entity);
@@ -199,6 +177,81 @@ namespace Portfolio.Controllers
                 return NotFound();
 
             _context.Remove(entity);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        protected async Task<ActionResult> PostWithImageAndReadme<TCreation, TEntity, TRead>
+            (TCreation creationDTO, string routeName, string imageContainer, string readmeContainer)
+            where TEntity : class, IId, IHasImageUrl, IReadmeUrl
+            where TCreation : IHasImage, IReadme
+        {
+            var entity = _mapper.Map<TEntity>(creationDTO);
+
+            var image = creationDTO.Image;
+            if (image != null)
+            {
+                entity.ImageUrl = await FilesUtil.GetUrlFile
+                    (image, _fileStorage, imageContainer, ActionForFileType.Save);
+            }
+
+            var readme = creationDTO.Readme;
+            if (readme != null)
+            {
+                entity.ReadmeUrl = await FilesUtil.GetUrlFile
+                    (readme, _fileStorage, readmeContainer, ActionForFileType.Save);
+            }
+
+            var readmeES = creationDTO.ReadmeES;
+            if (readmeES != null)
+            {
+                entity.ReadmeUrlES = await FilesUtil.GetUrlFile
+                    (readmeES, _fileStorage, readmeContainer, ActionForFileType.Save);
+            }
+
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
+
+            var readEntity = _mapper.Map<TRead>(entity);
+
+            return new CreatedAtRouteResult(routeName, new { id = entity.Id }, readEntity);
+        }
+
+        protected async Task<ActionResult> PutWithImageAndReadme<TCreation, TEntity>
+           (int id, TCreation creationDTO, string imageContainer, string readmeContainer)
+            where TEntity : class, IId, IHasImageUrl, IReadmeUrl
+            where TCreation : IHasImage, IReadme
+        {
+            var entity = await _context.Set<TEntity>()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (entity == null)
+                return NotFound();
+
+            var image = creationDTO.Image;
+            if (image != null)
+            {
+                entity.ImageUrl = await FilesUtil.GetUrlFile
+                    (image, _fileStorage, imageContainer, ActionForFileType.Edit);
+            }
+
+            var readme = creationDTO.Readme;
+            if (readme != null) {
+                entity.ReadmeUrl = await FilesUtil.GetUrlFile
+                    (readme, _fileStorage, readmeContainer, ActionForFileType.Edit);
+            }
+
+            var readmeES = creationDTO.ReadmeES;
+            if (readmeES != null)
+            {
+                entity.ReadmeUrlES = await FilesUtil.GetUrlFile
+                    (readmeES, _fileStorage, readmeContainer, ActionForFileType.Edit);
+            }
+
+            _mapper.Map(creationDTO, entity);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

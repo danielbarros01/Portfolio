@@ -22,6 +22,7 @@ namespace Portfolio.Controllers
         private readonly IMapper _mapper;
         private readonly IFileStorage _fileStorage;
         private readonly string _folderContainerFiles = "Educations";
+        private readonly string readmesFolderPath = "Educations/readmes";
 
         public EducationsController
             (ApplicationDbContext context, IMapper mapper, IFileStorage fileStorage)
@@ -65,8 +66,8 @@ namespace Portfolio.Controllers
 
             await OrderUtil.OrderConflict<Education, EducationCreationDTO>(_context, educationCreation);
 
-            return await PostWithImage<EducationCreationDTO, Education, EducationDTO>
-                (educationCreation, "GetEducation", _folderContainerFiles);
+            return await PostWithImageAndReadme<EducationCreationDTO, Education, EducationDTO>
+                (educationCreation, "GetEducation", _folderContainerFiles, readmesFolderPath);
         }
 
         [HttpPut("{id:int}")]
@@ -84,7 +85,7 @@ namespace Portfolio.Controllers
             if (!removeAssociations)
                 return NotFound();
 
-            return await PutWithImage<EducationCreationDTO, Education>(id, educationCreation, _folderContainerFiles);
+            return await PutWithImageAndReadme<EducationCreationDTO, Education>(id, educationCreation, _folderContainerFiles, readmesFolderPath);
         }
 
         [HttpDelete("{id:int}")]

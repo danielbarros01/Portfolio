@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Portfolio.DTOs.Project
 {
-    public class ProjectCreationDTO : IHasImage, IWithTechnologiesIds
+    public class ProjectCreationDTO : IHasImage, IWithTechnologiesIds, IReadme
     {
         public String Title { get; set; }
         public String Description { get; set; }
@@ -20,6 +20,14 @@ namespace Portfolio.DTOs.Project
         [FileSizeValidate(maxSizeInMb: 4)]
         [FileTypeValidate(groupFileType: GroupFileType.Video)]
         public IFormFile? VideoUrl { get; set; }
+
+        [FileSizeValidate(maxSizeInMb: 4)]
+        [FileTypeValidate(groupFileType: GroupFileType.Readme)]
+        public IFormFile? Readme { get; set; }
+
+        [FileSizeValidate(maxSizeInMb: 4)]
+        [FileTypeValidate(groupFileType: GroupFileType.Readme)]
+        public IFormFile? ReadmeES { get; set; }
 
         public String? LinkGithub1 { get; set; }
         public String? LinkGithub2 { get; set; }

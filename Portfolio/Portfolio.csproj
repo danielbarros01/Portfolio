@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Projects\" />
+    <Folder Include="wwwroot\Projects\readmes\" />
   </ItemGroup>
 
 </Project>

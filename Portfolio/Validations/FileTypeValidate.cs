@@ -15,11 +15,13 @@ namespace Portfolio.Validations
         {
             var validImageTypes = new string[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
             var validVideoTypes = new string[] { "video/mp4", "video/webm", "video/avi" };
+            var validReadmeTypes = new string[] { "text/plain", "text/markdown", "text/html" };
 
             validTypes = groupFileType switch
             {
                 GroupFileType.Image => validImageTypes,
                 GroupFileType.Video => validVideoTypes,
+                GroupFileType.Readme => validReadmeTypes,
                 _ => validImageTypes.Union(validVideoTypes).ToArray()
             };
         }

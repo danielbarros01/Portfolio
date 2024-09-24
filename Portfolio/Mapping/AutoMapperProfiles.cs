@@ -25,6 +25,7 @@ namespace Portfolio.Mapping
 
             CreateMap<ProjectCreationDTO, Project>()
                 .ForMember(x => x.ImageUrl, options => options.Ignore())
+                .ForMember(x => x.ReadmeUrl, options => options.Ignore())
                 .ForMember(
                     x => x.ProjectsTechnologies,
                     options => options.MapFrom(src => MapAssociationTechnologies<ProjectsTechnologies>(src.TechnologyIds))
@@ -53,6 +54,8 @@ namespace Portfolio.Mapping
 
             CreateMap<EducationCreationDTO, Education>()
                 .ForMember(x => x.ImageUrl, options => options.Ignore())
+                .ForMember(x => x.ReadmeUrl, options => options.Ignore())
+                .ForMember(x => x.ReadmeUrlES, options => options.Ignore())
                 .ForMember(
                     x => x.EducationsTechnologies,
                     options => options.MapFrom(src => MapAssociationTechnologies<EducationsTechnologies>(src.TechnologyIds))
