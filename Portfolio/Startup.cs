@@ -1,8 +1,10 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using Portfolio.Filters;
 using Portfolio.Services;
 using Portfolio.Services.Email;
 using Portfolio.Services.Storage;
+using System.Configuration;
 
 namespace Portfolio
 {
@@ -21,25 +23,24 @@ namespace Portfolio
             services.AddTransient<IFileStorage, LocalFileStorage>();
 
             services.AddHttpContextAccessor();
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(ExceptionFilter));
+            });
+
             services.AddEndpointsApiExplorer();
 
-            services.AddDbContext<ApplicationDbContext>(
-                options => options.UseMySql(
-                    configuration["ConnectionStrings:MySqlConnection"] + ";SslMode=none;",
-                    ServerVersion.AutoDetect(configuration["ConnectionStrings:MySqlConnection"])
-                ));
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowLocalhost",
                     builder =>
                     {
-                        builder.WithOrigins("http://127.0.0.1:5500")
-                               .AllowAnyHeader()
-                               .AllowAnyMethod();
-
-                        builder.WithOrigins("http://localhost:3000")
+                        builder.WithOrigins("<your-domain>")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });
@@ -47,6 +48,11 @@ namespace Portfolio
 
 
             services.AddScoped<IEmailService, EmailService>();
+
+            services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.ConnectionString = configuration["ApplicationInsights:ConnectionString"];
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)

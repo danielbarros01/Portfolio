@@ -19,12 +19,6 @@ namespace Portfolio.Helpers
                 .CountAsync() == entityCreation.TechnologyIds.Count();
         }
 
-        /*
-         ACTUALIZAR CODIGO
-        ELIMINA LOS NUEVOS QUE VIENEN
-        NO LOS QUE YA ESTAN
-         */
-
         public static async Task<Boolean> RemoveAssociations<TEntity, TEntityAssociation>(ApplicationDbContext context, int id, TEntity entity)
             where TEntity : class, IWithTechnologiesIds
             where TEntityAssociation : class, IWithTechnologyId

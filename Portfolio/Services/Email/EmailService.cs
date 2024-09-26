@@ -35,26 +35,21 @@ namespace Portfolio.Services.Email
             message.Priority = MessagePriority.Urgent;
             message.Headers.Add("X-Email", $"{request.Email}");
 
-            // Crear un cliente SMTP que se encargará de enviar el correo
             using var smtp = new SmtpClient();
 
-            // Conectarse al servidor SMTP usando las configuraciones para el host, puerto y seguridad (StartTls)
             await smtp.ConnectAsync(
-                _configuration.GetSection("MailSettings:Host").Value, // Host del servidor SMTP (ej. smtp.gmail.com)
-                Convert.ToInt32(_configuration.GetSection("MailSettings:Port").Value), // Puerto del servidor (ej. 587)
-                SecureSocketOptions.StartTls // Usar StartTLS para encriptar la conexión
+                _configuration.GetSection("MailSettings:Host").Value,
+                Convert.ToInt32(_configuration.GetSection("MailSettings:Port").Value),
+                SecureSocketOptions.StartTls 
             );
 
-            // Autenticarse en el servidor usando el correo y la contraseña configurados (appsettings.json)
             await smtp.AuthenticateAsync(
-                _configuration.GetSection("MailSettings:Mail").Value, // Correo de la cuenta usada para enviar
-                _configuration.GetSection("MailSettings:Password").Value // Contraseña de la cuenta (o clave de aplicación de Gmail)
+                _configuration.GetSection("MailSettings:Mail").Value, 
+                _configuration.GetSection("MailSettings:Password").Value 
             );
 
-            // Enviar el correo con el cliente SMTP
             await smtp.SendAsync(message);
 
-            // Desconectarse del servidor SMTP después de enviar el correo
             await smtp.DisconnectAsync(true);
         }
     }

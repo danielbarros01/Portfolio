@@ -25,24 +25,11 @@ namespace Portfolio
             modelBuilder.Entity<SoftSkillsTechnologies>()
                 .HasKey(x => new { x.AssociationId, x.TechnologyId });
 
-            // Clave primaria compuesta
             modelBuilder.Entity<ProjectsTechnologies>()
                 .HasKey(pt => new { pt.AssociationId, pt.TechnologyId });
 
             modelBuilder.Entity<EducationsTechnologies>()
                 .HasKey(pt => new { pt.AssociationId, pt.TechnologyId });
-
-            /*// Relación con Project
-            modelBuilder.Entity<ProjectsTechnologies>()
-                .HasOne(pt => pt.Project)
-                .WithMany(p => p.ProjectsTechnologies)
-                .HasForeignKey(pt => pt.AssociationId);
-
-            // Relación con Technology
-            modelBuilder.Entity<ProjectsTechnologies>()
-                .HasOne(pt => pt.Technology)
-                .WithMany(t => t.ProjectsTechnologies)
-                .HasForeignKey(pt => pt.TechnologyId);*/
 
             base.OnModelCreating(modelBuilder);
         }
