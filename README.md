@@ -21,5 +21,6 @@ This API has been created with the intention of serving as a solid and scalable 
 - **Backend:** C# and .NET
 - **Infrastructure:** Azure
 
-##📂 EER Diagram
+## 📂 EER Diagram
+
 ![eer diagram](https://github.com/user-attachments/assets/a1c3b6c3-895f-4037-9630-14a9c4e00042)
