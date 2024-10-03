@@ -5,17 +5,6 @@ namespace Portfolio.Helpers
 {
     public class FilesUtil
     {
-        //public async static Task SaveReadme<TEntityCreation, TEntity>
-        //    (TEntityCreation entityCreation, TEntity entity, IFileStorage fileStorage, String container)
-        //    where TEntityCreation : class, IReadme
-        //{
-        //    var readme = entityCreation.Readme;
-        //    if (readme != null)
-        //    {
-        //        entity = await SaveFile(readme, fileStorage, container);
-        //    }
-        //}
-
         public static async Task<String> GetUrlFile<TFile>(
             TFile file, IFileStorage fileStorage, String container,
             ActionForFileType actionType, String currentUrl = null

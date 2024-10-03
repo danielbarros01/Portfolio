@@ -1,10 +1,13 @@
 ﻿
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Portfolio.Filters;
 using Portfolio.Services;
 using Portfolio.Services.Email;
 using Portfolio.Services.Storage;
 using System.Configuration;
+using System.Text;
 
 namespace Portfolio
 {
@@ -40,12 +43,23 @@ namespace Portfolio
                 options.AddPolicy("AllowLocalhost",
                     builder =>
                     {
-                        builder.WithOrigins("<your-domain>")
+                        builder.WithOrigins("http://127.0.0.1:5500")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+
+                        builder.WithOrigins("https://portfolionode-d7fbg7hscgd4ddef.canadacentral-01.azurewebsites.net")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+
+                        builder.WithOrigins("https://danielbarrosdev.com")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });
             });
-
 
             services.AddScoped<IEmailService, EmailService>();
 
@@ -53,6 +67,29 @@ namespace Portfolio
             {
                 options.ConnectionString = configuration["ApplicationInsights:ConnectionString"];
             });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = "External";
+            })
+            .AddCookie("External")
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration["Authentication:Issuer"],  // Debe coincidir con el valor en el token
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:SecretKey"])) // La clave debe coincidir
+                };
+            });
+
+            services.AddAuthorizationBuilder()
+                .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)

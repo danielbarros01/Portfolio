@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +48,7 @@ namespace Portfolio.Controllers
                 );
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] TechnicalSkillCreationDTO skillCreationDTO)
         {
@@ -68,6 +71,7 @@ namespace Portfolio.Controllers
                 (skillCreationDTO, "GetTechnicalSkill");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<TechnicalSkill>> Put(int id, [FromBody] TechnicalSkillCreationDTO skillCreationDTO)
         {
@@ -80,6 +84,7 @@ namespace Portfolio.Controllers
             return await Put<TechnicalSkillCreationDTO, TechnicalSkill>(id, skillCreationDTO);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +39,7 @@ namespace Portfolio.Controllers
             return await Get<Technology, TechnologyDTO>(id);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] TechnologyCreationDTO technologyCreationDTO)
         {
@@ -56,6 +59,7 @@ namespace Portfolio.Controllers
                 (technologyCreationDTO, "GetTechnology", folderContainerFiles);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromForm] TechnologyCreationDTO technologyCreationDTO)
         {
@@ -69,6 +73,7 @@ namespace Portfolio.Controllers
                 (id, technologyCreationDTO, folderContainerFiles);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {

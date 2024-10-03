@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.DTOs.Others;
@@ -7,8 +9,6 @@ using Portfolio.DTOs.Skills.SoftSkill;
 using Portfolio.DTOs.Skills.TechnologySkill;
 using Portfolio.Entities;
 using Portfolio.Helpers;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Portfolio.Controllers
 {
@@ -49,6 +49,7 @@ namespace Portfolio.Controllers
                 );
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] SoftSkillCreationDTO softSkillCreation)
         {
@@ -64,6 +65,7 @@ namespace Portfolio.Controllers
                 (softSkillCreation, "GetSoftSkill");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromBody] SoftSkillCreationDTO softSkillCreation)
         {
@@ -85,6 +87,7 @@ namespace Portfolio.Controllers
             return await Put<SoftSkillCreationDTO, SoftSkill>(id, softSkillCreation);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {

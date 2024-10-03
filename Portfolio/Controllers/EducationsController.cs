@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,7 @@ namespace Portfolio.Controllers
                 );
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] EducationCreationDTO educationCreation)
         {
@@ -70,6 +72,7 @@ namespace Portfolio.Controllers
                 (educationCreation, "GetEducation", _folderContainerFiles, readmesFolderPath);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromForm] EducationCreationDTO educationCreation)
         {
@@ -88,6 +91,7 @@ namespace Portfolio.Controllers
             return await PutWithImageAndReadme<EducationCreationDTO, Education>(id, educationCreation, _folderContainerFiles, readmesFolderPath);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {

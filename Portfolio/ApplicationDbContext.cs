@@ -20,6 +20,8 @@ namespace Portfolio
         public DbSet<Education> Educations { get; set; }
         public DbSet<EducationsTechnologies> EducationsTechnologies { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SoftSkillsTechnologies>()

@@ -168,6 +168,7 @@ namespace Portfolio.Controllers
             return NoContent();
         }
 
+
         protected async Task<ActionResult> Delete<TEntity>(int id) where TEntity : class, IId
         {
             var entity = await _context.Set<TEntity>()
