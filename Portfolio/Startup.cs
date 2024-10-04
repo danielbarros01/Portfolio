@@ -50,14 +50,6 @@ namespace Portfolio
                         builder.WithOrigins("http://localhost:3000")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
-
-                        builder.WithOrigins("https://portfolionode-d7fbg7hscgd4ddef.canadacentral-01.azurewebsites.net")
-                               .AllowAnyHeader()
-                               .AllowAnyMethod();
-
-                        builder.WithOrigins("https://danielbarrosdev.com")
-                               .AllowAnyHeader()
-                               .AllowAnyMethod();
                     });
             });
 
