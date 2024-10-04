@@ -1,5 +1,11 @@
 # Personal API
 
+<<<<<<< HEAD
+=======
+![ProyectoFlyer](https://github.com/user-attachments/assets/f43b44f5-6791-41bd-807d-01b34396f2e6)
+
+
+>>>>>>> a03705f4eb0249b331334763a0ff2f7f28679498
 I have developed an API to include in my personal portfolio, with the goal of creating a scalable and robust foundation. This API is designed to be easily updatable and maintainable, allowing for future expansions. Currently, the API, the database, and the portfolio client are deployed on Azure.
 
 ## 🚀 Main Features
@@ -17,3 +23,10 @@ This API has been created with the intention of serving as a solid and scalable 
 - **Database:** MySQL
 - **Backend:** C# and .NET
 - **Infrastructure:** Azure
+<<<<<<< HEAD
+=======
+
+## 📂 EER Diagram
+
+![eer diagram](https://github.com/user-attachments/assets/a1c3b6c3-895f-4037-9630-14a9c4e00042)
+>>>>>>> a03705f4eb0249b331334763a0ff2f7f28679498
